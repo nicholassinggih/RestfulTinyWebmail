@@ -1,0 +1,11 @@
+growl-notifications{
+  position: fixed;
+  top: 670px;
+  right: 10px;
+}
+growl-notification {
+  border: 1px solid black;
+  padding: 15px 30px;
+  margin-bottom: 15px;
+  max-width: 400px;
+}

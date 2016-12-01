@@ -1,0 +1,74 @@
+﻿<!DOCTYPE html>
+<html ng-app="emailapp">
+<head>
+    <script src="Scripts/angular.js" type="text/javascript"></script>
+    <script src="Scripts/angular-ui/ui-bootstrap.js" type="text/javascript"></script>
+    <script src="Scripts/loading-bar.js" type="text/javascript"></script>
+    <script src="Scripts/angular-growl-notifications.js" type="text/javascript"></script>
+    <script src="Scripts/app/emailapp.js" type="text/javascript"></script>
+    <script src="Scripts/app/emailapp.module.js" type="text/javascript"></script>
+    
+    <link rel="stylesheet" href="Content/ui-bootstrap-csp.css" />
+    <link rel="stylesheet" href="Content/bootstrap.css" />
+    <link rel="stylesheet" href="Content/loading-bar.css" />
+    <link rel="stylesheet" href="Content/growl-style.css" />
+
+    <title>Tiny Email Application</title>
+    <meta charset="utf-8" />
+</head>
+<body ng-controller="MainController as mainCtrl">
+    <form name="mailForm" ng-submit="mainCtrl.sendEmail()" novalidate>
+        <div><growl-notifications></growl-notifications></div>
+        <div ng-repeat="(id, notification) in notifications track by id">
+            <growl-notification ttl="10000">
+                {{notification}}
+            </growl-notification>
+        </div>
+        <fieldset ng-disabled="mainCtrl.isSending">
+            <div class="form-group container" ng-class="{ 'has-error' : mailForm.from.$touched && ((mailForm.from.$invalid && !mailForm.from.$pristine) || mailForm.from.$error.required )}">
+                <label for="input-sender">From</label>
+                <input name="from" class="form-control" id="input-sender" type="email" required ng-model="mainCtrl.from" placeholder="Enter sender's email address" />
+                <p ng-show="mailForm.from.$error.required && mailForm.from.$touched" class="help-block">Sender address is required.</p>
+                <p ng-show="mailForm.from.$error.email && mailForm.from.$touched" class="help-block">Please input the correct email format.</p>
+            </div>
+
+            <div class="form-group container" ng-class="{ 'has-error' : mailForm.tos.$touched && ((mailForm.tos.$invalid) || mainCtrl.noRecipients() )}">
+                <label for="input-tos">To</label>
+                <input name="tos" class="form-control" id="input-tos" type="text" multiple-emails ng-list=", " ng-model="mainCtrl.tos" placeholder="Enter recipients' email address" />
+                <p ng-show="mainCtrl.noRecipients() && mailForm.tos.$touched" class="help-block">At least one recipient address is required as To/CC/BCC.</p>
+                <p ng-show="(mailForm.tos.$invalid) && mailForm.tos.$touched" class="help-block">Please input the correct email format.</p>
+
+            </div>
+
+            <div class="form-group container" ng-class="{ 'has-error' : mailForm.ccs.$touched && ((mailForm.ccs.$invalid) || mainCtrl.noRecipients() )}">
+                <label for="input-ccs">CC</label>
+                <input name="ccs" class="form-control" id="input-ccs" type="text" multiple-emails ng-list=", " ng-model="mainCtrl.ccs" placeholder="Enter CCs" ng-click="mainCtrl.cc()" />
+                <p ng-show="mainCtrl.noRecipients() && mailForm.ccs.$touched" class="help-block">At least one recipient address is required as To/CC/BCC.</p>
+                <p ng-show="(mailForm.ccs.$invalid) && mailForm.ccs.$touched" class="help-block">Please input the correct email format.</p>
+            </div>
+
+            <div class="form-group container" ng-class="{ 'has-error' : mailForm.bccs.$touched && ((mailForm.bccs.$invalid) || mainCtrl.noRecipients() )}">
+                <label for="input-bccs">BCC</label>
+                <input name="bccs" class="form-control" id="input-bccs" type="text" multiple-emails ng-list=", " ng-model="mainCtrl.bccs" placeholder="Enter BCCs" />
+                <p ng-show="mainCtrl.noRecipients() && mailForm.bccs.$touched" class="help-block">At least one recipient address is required as To/CC/BCC.</p>
+                <p ng-show="(mailForm.bccs.$invalid) && mailForm.bccs.$touched" class="help-block">Please input the correct email format.</p>
+            </div>
+
+            <div class="form-group container">
+                <label for="input-subject">Subject</label>
+                <input name="subject" class="form-control" id="input-subject" type="text" ng-model="mainCtrl.subject" placeholder="Enter Subject" />
+            </div>
+
+            <div class="form-group container">
+                <label for="input-body">Body</label>
+                <textarea class="form-control" rows="10" id="input-body" ng-model="mainCtrl.content"></textarea>
+            </div>
+
+            <div class="form-group container">
+                <button type="submit" class="form-control" ng-disabled="mailForm.$invalid || mainCtrl.noRecipients()">Send</button>
+            </div>
+        </fieldset>
+
+    </form>
+</body>
+</html>
